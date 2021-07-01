@@ -1,0 +1,94 @@
+---
+- hosts: all
+  become: yes
+
+  vars:
+    homeDir: /home/ubuntu
+    appDir: app
+    start_env:
+      SECRET: MA5y3KZGmjSS5dp@
+      PORT: 443
+      DATABASE_URL: "{{database_url}}"
+    os_environment:
+      - key: SECRET 
+        value : MA5y3KZGmjSS5dp@
+      - key: PORT 
+        value : 443
+      - key: DATABASE_URL
+        value : "{{database_url}}"
+
+  tasks:
+    - name: install nodejs prerequisites
+      apt:
+        name:
+          - apt-transport-https
+          - python3
+        state: latest
+        update_cache: yes
+        
+    - name: add nodejs apt key
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+        
+    - name: add nodejs repository
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_14.x {{ ansible_lsb.codename }} main
+        state: present
+        update_cache: yes
+        
+    - name: install nodejs
+      apt:
+        name: nodejs
+        state: latest
+
+    - name: Install pm2
+      npm: name=pm2 global=yes production=yes
+
+    - name: Create APP Directory
+      file: path={{homeDir}}/{{appDir}} state=directory
+
+    - name: Git checkout website
+      git:
+        repo: https://Ombrelin:{{github_token}}@github.com/Incident-Ticket-Manager/backend-hello-world.git
+        dest: "{{homeDir}}/{{appDir}}"
+  
+
+    - name: Running ownership in .npm
+      command: "chown -R ubuntu ~/.npm"
+      become: yes
+      args:
+        chdir: "{{homeDir}}/{{appDir}}"
+
+    - name: Running ownership in node_modules
+      command: "chown -R ubuntu ./"
+      become: yes
+      args:
+        chdir: "{{homeDir}}/{{appDir}}"
+      
+    - name: Running NPM install
+      command: "npm install"
+      become: yes
+      args:
+        chdir: "{{homeDir}}/{{appDir}}"
+      # register: npm_finished
+      #when: git_finished.changed
+
+    - name: Start APP
+      command: pm2 start app.js
+      # when: npm_finished.changed
+      args:
+        chdir: "{{homeDir}}/{{appDir}}"
+      environment: "{{ start_env }}"
+
+    - name: PM2 Startup
+      command: pm2 startup
+      args:
+        chdir: "{{homeDir}}/{{appDir}}"
+      environment: "{{ start_env }}"
+
+    - name: PM2 Save
+      command: pm2 save
+      args:
+        chdir: "{{homeDir}}/{{appDir}}"
+      environment: "{{ start_env }}"
