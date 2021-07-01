@@ -26,7 +26,7 @@ data "aws_ami" "selected" {
   }
   filter {
     name   = "tag:Name"
-    values = ["ITM-Backend"]
+    values = ["ITM-Backend-Hello"]
   }
   most_recent = true
 }
