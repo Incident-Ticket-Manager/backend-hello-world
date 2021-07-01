@@ -79,10 +79,6 @@ data "aws_subnet" "subnet-private-3" {
 ## AZ zones de disponibilités dans la région
 data "aws_availability_zones" "all" {}
 
-data "template_file" "user_data" {
-  template = file("template-itm-backend.yaml")
-}
-
 ########################################################################
 # Security Groups
 ## ASG
