@@ -69,6 +69,38 @@ resource "aws_subnet" "subnet-public-3" {
   }
 }
 
+	## Private		
+### AZ1		
+resource "aws_subnet" "subnet-private-1" {		
+  vpc_id                  = aws_vpc.vpc.id		
+  cidr_block              = "10.0.4.0/24"		
+  map_public_ip_on_launch = "false"		
+  availability_zone       = "eu-west-1a"		
+  tags = {		
+    Name = "${var.env}-subnet-private-1"		
+  }		
+}		
+### AZ2		
+resource "aws_subnet" "subnet-private-2" {		
+  vpc_id                  = aws_vpc.vpc.id		
+  cidr_block              = "10.0.5.0/24"		
+  map_public_ip_on_launch = "false"		
+  availability_zone       = "eu-west-1b"		
+  tags = {		
+    Name = "${var.env}-subnet-private-2"		
+  }		
+}		
+### AZ3		
+resource "aws_subnet" "subnet-private-3" {		
+  vpc_id                  = aws_vpc.vpc.id		
+  cidr_block              = "10.0.6.0/24"		
+  map_public_ip_on_launch = "false"		
+  availability_zone       = "eu-west-1c"		
+  tags = {		
+    Name = "${var.env}-subnet-private-3"		
+  }		
+}
+
 # Route Table
 ## Private
 ### Use Main Route Table
