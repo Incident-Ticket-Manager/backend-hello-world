@@ -3,7 +3,7 @@ provider "aws" {}
 terraform {
   backend "s3" {
     bucket = "terraform-karimb"
-    key    = "deploy-backend-hello-itm.tfstate"
+    key    = "deploy-infra-hello-itm.tfstate"
   }
 }
 
